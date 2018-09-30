@@ -1,8 +1,9 @@
-import os
-
-import pyjags
 import numpy as np
+import os
 import pandas as pd
+import pyjags
+
+from jags.utils import summary
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + '/'
 
@@ -30,13 +31,6 @@ def generate_init_theta():
     return theta_init
 
 
-def summary(samples, varname, p=97.5):
-    values = samples[varname]
-    ci = np.percentile(values, [100-p, p])
-    print('{:<6} mean = {:>5.3f}, {}% credible interval [{:>4.3f} {:>4.3f}]'.format(
-      varname, np.mean(values), p, *ci))
-
-
 num_chains = 3
 init_thetas = [dict(theta=generate_init_theta()) for _ in range(num_chains)]
 
@@ -47,4 +41,4 @@ samples = model.sample(3334, vars=['theta'])
 
 print(samples['theta'])
 print(np.shape(samples['theta']))
-summary(samples, 'theta')
+summary(samples['theta'], 'theta')
