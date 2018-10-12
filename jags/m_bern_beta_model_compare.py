@@ -1,12 +1,9 @@
 import itertools
 
-import numpy as np
+import matplotlib.pyplot as plt
 import os
 import pandas as pd
 import pyjags
-import matplotlib.pyplot as plt
-
-from jags.utils import summary
 
 ROOT_DIR = os.path.dirname(os.path.abspath(__file__)) + '/'
 
@@ -34,17 +31,19 @@ model.update(500)
 samples = model.sample(3334, vars=['theta', 'm'])
 
 samples_flatten = dict([(k, v.flatten()) for k, v in samples.items()])
-print(samples_flatten)
 
 df_samples = pd.DataFrame.from_dict(samples_flatten)
 
 theta_m1 = df_samples[df_samples['m'] == 1]['theta'].tolist()
 theta_m2 = df_samples[df_samples['m'] == 2]['theta'].tolist()
 
-fig, (ax1, ax2) = plt.subplots(1, 2)
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
 ax1.hist(df_samples['theta'].tolist(), 50, density=True, facecolor='g', rwidth=0.5)
-# plt.hist(df_samples['m'], 5, density=True, facecolor='g', rwidth=0.5)
 ax2.hist(theta_m1, 50, density=True, facecolor='r', rwidth=0.5)
 ax2.hist(theta_m2, 50, density=True, facecolor='b', rwidth=0.5)
+ax3.hist(df_samples['m'].tolist(), 5, density=True, facecolor='g', rwidth=0.5)
+
+fig.tight_layout()
+
 plt.show()
